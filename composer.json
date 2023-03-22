@@ -1,18 +1,19 @@
 {
-    "name": "laravel-notification-channels/:package_name",
-    "description": ":package_description",
-    "homepage": "https://github.com/laravel-notification-channels/:package_name",
+    "name": "laravel-notification-channels/suprsend",
+    "description": "Enables SuprSend as a notification channel for Laravel applications",
+    "homepage": "https://github.com/laravel-notification-channels/suprsend",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": ":author_website",
+            "name": "Marco Rivadeneyra",
+            "email": "marcorivm@gmail.com",
+            "homepage": "https://marcorivm.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": ">=7.2",
+        "guzzlehttp/guzzle": "^7.0",
         "illuminate/notifications": "~6.0 || ~7.0 || ~8.0",
         "illuminate/support": "~6.0 || ~7.0 || ~8.0"
     },
@@ -22,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "NotificationChannels\\:channel_namespace\\": "src"
+            "NotificationChannels\\SuprSend\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "NotificationChannels\\:channel_namespace\\Test\\": "tests"
+            "NotificationChannels\\SuprSend\\Test\\": "tests"
         }
     },
     "scripts": {
