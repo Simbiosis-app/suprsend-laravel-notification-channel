@@ -59,7 +59,8 @@ Finally, configure your SuprSend API credentials in your config/services.php fil
 
 ## Usage
 
-To send notifications via SuprSend using the `SuprSendMessage` class, you first need to create a Laravel notification class. In your notification class, define a `toSuprSend` method that returns an instance of the SuprSendMessage class:
+To send notifications via SuprSend using the SuprSendMessage class, you first need to create a Laravel notification class. In your notification class, define a toSuprSend method that returns an instance of the SuprSendMessage class:
+
 
 ```php
 use Illuminate\Notifications\Notification;
@@ -69,33 +70,22 @@ class InvoicePaid extends Notification
 {
     public function via($notifiable)
     {
-        return ['suprSend'];
+        return ['suprsend'];
     }
 
     public function toSuprSend($notifiable)
     {
         return SuprSendMessage::create()
-            ->workflowName('invoice_paid')
-            ->template('your_invoice_has_been_paid')
+            ->eventName('invoice_paid')
             ->data([
                 'invoice_number' => $this->invoice->number,
                 'amount' => $this->invoice->amount,
-            ])
-            ->notificationCategory(NotificationCategory::Promotional)
-            ->delay('15m')
-            ->attachments([
-                [
-                    'filename' => 'billing.pdf',
-                    'contentType' => 'application/pdf',
-                    'data' => 'Q29uZ3JhdHVsYXRpb25zLCB5b3UgY2FuIGJhc2U2NCBkZWNvZGUh'
-                ],
             ]);
     }
 }
-
 ```
 
-In the toSuprSend method, you can customize the `SuprSendMessage` instance to your needs. Set the `workflowName` and `template` properties to specify the SuprSend workflow and template to use. Use the `data` method to pass any additional data to the notification. Use the `notificationCategory` method to specify the notification category. Use the `delay` method to specify a delay before sending the notification. And use the `attachments` method to attach files to the notification.
+In the `toSuprSend` method, you can customize the `SuprSendMessage` instance to your needs. Set the `eventName` property to specify the name of the event you want to trigger in SuprSend. Use the `data` method to pass any additional data to the notification.
 
 ## Changelog
 

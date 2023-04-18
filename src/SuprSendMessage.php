@@ -2,21 +2,14 @@
 
 namespace NotificationChannels\SuprSend;
 
-use NotificationChannels\SuprSend\Enums\NotificationCategory;
-
 class SuprSendMessage
 {
-    protected string $workflowName;
-    protected string $template;
-    protected NotificationCategory $notificationCategory;
     protected array $data = [];
-    protected array $users = [];
-    protected string $delay;
-    protected array $attachments = [];
+    protected string $eventName;
 
     public function __construct()
     {
-        $this->notificationCategory = NotificationCategory::Transactional;
+        //
     }
 
     public static function create(): self
@@ -24,23 +17,9 @@ class SuprSendMessage
         return new self();
     }
 
-    public function workflowName(string $workflowName): self
+    public function eventName(string $eventName): self
     {
-        $this->workflowName = $workflowName;
-
-        return $this;
-    }
-
-    public function template(string $template): self
-    {
-        $this->template = $template;
-
-        return $this;
-    }
-
-    public function notificationCategory(NotificationCategory $notificationCategory): self
-    {
-        $this->notificationCategory = $notificationCategory;
+        $this->eventName = $eventName;
 
         return $this;
     }
@@ -52,38 +31,13 @@ class SuprSendMessage
         return $this;
     }
 
-    public function users(array $users): self
+    public function getData(): array
     {
-        $this->users = $users;
-
-        return $this;
+        return $this->data;
     }
 
-    public function attachments(array $attachments): self
+    public function getEventName(): string
     {
-        $this->attachments = $attachments;
-
-        return $this;
-    }
-
-    public function delay(string $delay): self
-    {
-        $this->delay = $delay;
-
-        return $this;
-    }
-
-    public function toArray(): array
-    {
-        $this->data['$attachments'] = $this->attachments;
-
-        return [
-            'name' => $this->workflowName,
-            'template' => $this->template,
-            'notification_category' => $this->notificationCategory,
-            'delay' => $this->delay ?? '',
-            'users' => $this->users,
-            'data' => $this->data,
-        ];
+        return $this->eventName;
     }
 }

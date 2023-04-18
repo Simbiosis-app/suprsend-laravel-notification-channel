@@ -27,15 +27,21 @@ class SuprSendChannel
         /** @var SuprSendMessage $message */
         $message = $notification->toSuprSend($notifiable);
 
-        $message->users([
-            [
-                'distinct_id' => $this->createUniqueIdFor($notifiable->email),
-                '$email' => $notifiable->email,
-            ],
-        ]);
+        $distinctId = $this->createUniqueIdFor($notifiable->email);
+
+        $this->appendNewUser($notifiable->email, $distinctId);
 
         try {
-            $this->client->triggerWorkflow($message);
+            $this->client->triggerEvent($message, $distinctId);
+        } catch (\Exception $exception) {
+            throw CouldNotSendNotification::serviceRespondedWithAnError($exception);
+        }
+    }
+
+    protected function appendNewUser(string $email, string $distinctId)
+    {
+        try {
+            $this->client->appendUser($email, $distinctId);
         } catch (\Exception $exception) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($exception);
         }

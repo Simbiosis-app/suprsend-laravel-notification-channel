@@ -26,11 +26,37 @@ class SuprSendClient
         return $this;
     }
 
-    public function triggerWorkflow(SuprSendMessage $suprSendMessage)
+    public function triggerEvent(SuprSendMessage $suprSendMessage, string $distinctId)
     {
+        $payload = [
+            'distinct_id' => $distinctId,
+            'event' => $suprSendMessage->getEventName(),
+            'properties' => $suprSendMessage->getData(),
+        ];
+
         $this->sendRequest(
-            "{$this->workspaceKey}/trigger", 
-            json_encode($suprSendMessage->toArray())
+            "event", 
+            json_encode($payload)
+        );
+    }
+
+    public function appendUser(string $email, string $distinctId)
+    {
+        $payload = [
+            '$schema' => 2,
+            'distinct_id' => $distinctId,
+            '$user_operations' => [
+                [
+                    '$append' => [
+                        '$email' => $email,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->sendRequest(
+            "event", 
+            json_encode($payload)
         );
     }
 
@@ -46,5 +72,6 @@ class SuprSendClient
             ],
             'body' => $payload,
         ]);
+        
     }
 }
