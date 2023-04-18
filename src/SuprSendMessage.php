@@ -30,6 +30,13 @@ class SuprSendMessage
 
         return $this;
     }
+    
+    public function notifiable($notifiable): self
+    {
+        $this->data['notifiable'] = $notifiable;
+
+        return $this;
+    }
 
     public function getData(): array
     {

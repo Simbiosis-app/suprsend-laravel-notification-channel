@@ -26,6 +26,7 @@ class SuprSendChannel
     {
         /** @var SuprSendMessage $message */
         $message = $notification->toSuprSend($notifiable);
+        $message->notifiable($notifiable);
 
         $distinctId = $this->createUniqueIdFor($notifiable->email);
 
