@@ -69,7 +69,7 @@ class InvoicePaid extends Notification
 {
     public function via($notifiable)
     {
-        return ['suprsend'];
+        return ['suprSend'];
     }
 
     public function toSuprSend($notifiable)
