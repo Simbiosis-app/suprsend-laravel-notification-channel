@@ -7,9 +7,11 @@ use Illuminate\Notifications\Notification;
 
 class SuprSendChannel
 {
+    protected SuprSendClient $client;
+
     public function __construct()
     {
-        // Initialisation code here
+        $this->client = new SuprSendClient();
     }
 
     /**
@@ -22,10 +24,27 @@ class SuprSendChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        //$response = [a call to the api of your notification send]
+        /** @var SuprSendMessage $message */
+        $message = $notification->toSuprSend($notifiable);
 
-//        if ($response->error) { // replace this by the code need to check for errors
-//            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
-//        }
+        $message->users([
+            [
+                'distinct_id' => $this->createUniqueIdFor($notifiable->email),
+                '$email' => $notifiable->email,
+            ],
+        ]);
+
+        try {
+            $this->client->triggerWorkflow($message);
+        } catch (\Exception $exception) {
+            throw CouldNotSendNotification::serviceRespondedWithAnError($exception);
+        }
+    }
+
+    protected function createUniqueIdFor(string $email): string
+    {
+        $email = trim(strtolower($email));
+
+        return hash('sha256', $email . 'suprsend');
     }
 }

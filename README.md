@@ -1,24 +1,18 @@
-Please see [this repo](https://github.com/laravel-notification-channels/channels) for instructions on how to submit a channel proposal.
-
-# A Boilerplate repo for contributions
+# SuprSend Notification Channel for Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-notification-channels/suprsend.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/suprsend)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/laravel-notification-channels/suprsend/master.svg?style=flat-square)](https://travis-ci.org/laravel-notification-channels/suprsend)
-[![StyleCI](https://styleci.io/repos/:style_ci_id/shield)](https://styleci.io/repos/:style_ci_id)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/:sensio_labs_id.svg?style=flat-square)](https://insight.sensiolabs.com/projects/:sensio_labs_id)
 [![Quality Score](https://img.shields.io/scrutinizer/g/laravel-notification-channels/suprsend.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/suprsend)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/laravel-notification-channels/suprsend/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/suprsend/?branch=master)
 [![Total Downloads](https://img.shields.io/packagist/dt/laravel-notification-channels/suprsend.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/suprsend)
 
-This package makes it easy to send notifications using [SuprSend](link to service) with Laravel 5.5+, 6.x and 7.x
+This package makes it easy to send notifications using [SuprSend](https://www.suprsend.com/) with Laravel 5.5+, 6.x, 7.x, 8.x and 9.x
 
-**Note:** Replace ```:style_ci_id``` ```:sensio_labs_id``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md), [composer.json](composer.json) and other files, then delete this line.
-**Tip:** Use "Find in Path/Files" in your code editor to find these keywords within the package directory and replace all occurences with your specified term.
+SuprSend is a notification channel that can be used with Laravel. With SuprSend, Laravel developers can easily send notifications to their users via various channels, including email, SMS, and push notifications.
 
-This is where your description should go. Add a little code example so build can understand real quick how the package can be used. Try and limit it to a paragraph or two.
-
-
+To get started with SuprSend, developers can install the package via Composer and configure their SuprSend API credentials in the Laravel configuration file. Once set up, developers can use Laravel's built-in notification system to send notifications via SuprSend.
 
 ## Contents
 
@@ -36,19 +30,73 @@ This is where your description should go. Add a little code example so build can
 
 ## Installation
 
-Please also include the steps for any third-party service setup that's required for this package.
+You can install the SuprSend notification channel for Laravel using Composer. Run the following command in your terminal:
 
-### Setting up the SuprSend service
+```bash
+composer require laravel-notification-channels/suprsend
+```
 
-Optionally include a few steps how users can set up the service.
+Next, add the SuprSend service provider to your config/app.php file:
+
+```php
+'providers' => [
+    // Other service providers...
+
+    NotificationChannels\SuprSend\SuprSendServiceProvider::class,
+],
+```
+
+
+Finally, configure your SuprSend API credentials in your config/services.php file:
+
+```php
+'suprSend' => [
+    'workspace_key' => env('SUPRSEND_WORKSPACE_KEY'),
+    'workspace_secret' => env('SUPRSEND_WORKSPACE_SECRET'),
+    'api_key' => env('SUPRSEND_API_KEY'),
+],
+```
 
 ## Usage
 
-Some code examples, make it clear how to use the package
+To send notifications via SuprSend using the `SuprSendMessage` class, you first need to create a Laravel notification class. In your notification class, define a `toSuprSend` method that returns an instance of the SuprSendMessage class:
 
-### Available Message methods
+```php
+use Illuminate\Notifications\Notification;
+use NotificationChannels\SuprSend\SuprSendMessage;
 
-A list of all available options
+class InvoicePaid extends Notification
+{
+    public function via($notifiable)
+    {
+        return ['suprsend'];
+    }
+
+    public function toSuprSend($notifiable)
+    {
+        return SuprSendMessage::create()
+            ->workflowName('invoice_paid')
+            ->template('your_invoice_has_been_paid')
+            ->data([
+                'invoice_number' => $this->invoice->number,
+                'amount' => $this->invoice->amount,
+            ])
+            ->users([$notifiable->suprsend_id])
+            ->notificationCategory(NotificationCategory::Promotional)
+            ->delay('30 minutes')
+            ->attachments([
+                [
+                    'filename' => 'invoice.pdf',
+                    'data' => $this->invoice->pdf(),
+                    'mime_type' => 'application/pdf',
+                ],
+            ]);
+    }
+}
+
+```
+
+In the toSuprSend method, you can customize the `SuprSendMessage` instance to your needs. Set the `workflowName` and `template` properties to specify the SuprSend workflow and template to use. Use the `data` method to pass any additional data to the notification. Use the `users` method to specify which users should receive the notification. Use the `notificationCategory` method to specify the notification category. Use the `delay` method to specify a delay before sending the notification. And use the `attachments` method to attach files to the notification.
 
 ## Changelog
 

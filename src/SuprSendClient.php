@@ -8,32 +8,42 @@ class SuprSendClient
 {
     const API_URL = 'https://hub.suprsend.com/';
 
-    public function __construct(protected string $workspaceKey, protected string $workspaceSecret, protected array $config, protected Client $httpClient)
+    protected Client $httpClient;
+    protected string $workspaceKey;
+    protected string $workspaceSecret;
+    protected string $apiKey;
+    
+    public function __construct()
     {
-        $httpClient->setDefaultOption('base_url', self::API_URL);
+        $this->workspaceKey = config('services.suprSend.workspace_key');
+        $this->workspaceSecret = config('services.suprSend.workspace_secret');
+        $this->apiKey = config('services.suprSend.api_key');
+
+        $this->httpClient = new Client([
+            'base_uri' => self::API_URL,
+        ]);
+
         return $this;
     }
 
-    public function createOrUpdate($userId, $channels)
+    public function triggerWorkflow(SuprSendMessage $suprSendMessage)
     {
+        $this->sendRequest(
+            "{$this->workspaceKey}/trigger", 
+            json_encode($suprSendMessage->toArray())
+        );
     }
 
-    public function sendEvent($payload)
-    {
-        $uri = 'events';
-        $response = $this->sendRequest($uri, $payload);
-        return $response;
-    }
-
-    public function sendRequest($uri, $payload)
+    protected function sendRequest($uri, $payload)
     {
         $date = gmdate('D, d M Y H:i:s T');
         $signature = $this->getSignature($uri, $payload, $date);
+
         return $this->httpClient->post($uri, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Date' => $date,
-                'Authorization' => "{$this->workspaceKey}:{$signature}",
+                'Authorization' => "Bearer {$this->apiKey}",
             ],
             'body' => $payload,
         ]);

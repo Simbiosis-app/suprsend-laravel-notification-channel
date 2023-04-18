@@ -2,8 +2,9 @@
 
 namespace NotificationChannels\SuprSend;
 
-use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Support\Facades\Notification;
 
 class SuprSendServiceProvider extends ServiceProvider
 {
@@ -12,17 +13,9 @@ class SuprSendServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Bootstrap code here.
-
-        $this->app->when(SuprSendChannel::class)
-            ->needs(SuprSendClient::class)
-            ->give(function () {
-                $workspaceKey = config('services.suprsend.workspace_key');
-                $workspaceSecret = config('services.suprsend.workspace_secret');
-                $config = config('services.suprsend.config', []);
-
-                return new SuprSendClient($workspaceKey, $workspaceSecret, $config, new Client());
-            });
+        Notification::resolved(function (ChannelManager $service) {
+            $service->extend('suprSend', fn ($app) => $app->make(SuprSendChannel::class));
+        });
     }
 
     /**
@@ -30,5 +23,6 @@ class SuprSendServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        //
     }
 }
