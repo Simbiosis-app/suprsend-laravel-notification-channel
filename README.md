@@ -81,14 +81,13 @@ class InvoicePaid extends Notification
                 'invoice_number' => $this->invoice->number,
                 'amount' => $this->invoice->amount,
             ])
-            ->users([$notifiable->suprsend_id])
             ->notificationCategory(NotificationCategory::Promotional)
-            ->delay('30 minutes')
+            ->delay('15m')
             ->attachments([
                 [
-                    'filename' => 'invoice.pdf',
-                    'data' => $this->invoice->pdf(),
-                    'mime_type' => 'application/pdf',
+                    'filename' => 'billing.pdf',
+                    'contentType' => 'application/pdf',
+                    'data' => 'Q29uZ3JhdHVsYXRpb25zLCB5b3UgY2FuIGJhc2U2NCBkZWNvZGUh'
                 ],
             ]);
     }
@@ -96,7 +95,7 @@ class InvoicePaid extends Notification
 
 ```
 
-In the toSuprSend method, you can customize the `SuprSendMessage` instance to your needs. Set the `workflowName` and `template` properties to specify the SuprSend workflow and template to use. Use the `data` method to pass any additional data to the notification. Use the `users` method to specify which users should receive the notification. Use the `notificationCategory` method to specify the notification category. Use the `delay` method to specify a delay before sending the notification. And use the `attachments` method to attach files to the notification.
+In the toSuprSend method, you can customize the `SuprSendMessage` instance to your needs. Set the `workflowName` and `template` properties to specify the SuprSend workflow and template to use. Use the `data` method to pass any additional data to the notification. Use the `notificationCategory` method to specify the notification category. Use the `delay` method to specify a delay before sending the notification. And use the `attachments` method to attach files to the notification.
 
 ## Changelog
 
