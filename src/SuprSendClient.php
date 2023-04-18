@@ -37,7 +37,6 @@ class SuprSendClient
     protected function sendRequest($uri, $payload)
     {
         $date = gmdate('D, d M Y H:i:s T');
-        $signature = $this->getSignature($uri, $payload, $date);
 
         return $this->httpClient->post($uri, [
             'headers' => [
@@ -47,15 +46,5 @@ class SuprSendClient
             ],
             'body' => $payload,
         ]);
-    }
-
-    public function getSignature($resource, $payload, $date, $method = 'POST', $contentType = 'application/json')
-    {
-        $uri = '/' . trim($resource, '/') . '/';
-        $contentMD5 = md5($payload);
-        $stringToSign = $method . "\n" . $contentMD5 . "\n" . $contentType . "\n" . $date . "\n" . $uri;
-        $signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->workspaceSecret, true));
-
-        return $signature;
     }
 }
