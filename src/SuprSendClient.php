@@ -3,30 +3,29 @@
 namespace NotificationChannels\SuprSend;
 
 use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
 
 class SuprSendClient
 {
-    const API_URL = 'https://hub.suprsend.com/';
+    public const API_URL = 'https://hub.suprsend.com/';
 
     protected Client $httpClient;
     protected string $workspaceKey;
     protected string $workspaceSecret;
     protected string $apiKey;
-    
-    public function __construct()
+
+    public function __construct(?Client $httpClient = null)
     {
         $this->workspaceKey = config('services.suprSend.workspace_key');
         $this->workspaceSecret = config('services.suprSend.workspace_secret');
         $this->apiKey = config('services.suprSend.api_key');
 
-        $this->httpClient = new Client([
+        $this->httpClient = $httpClient ?? new Client([
             'base_uri' => self::API_URL,
         ]);
-
-        return $this;
     }
 
-    public function triggerEvent(SuprSendMessage $suprSendMessage, string $distinctId)
+    public function triggerEvent(SuprSendMessage $suprSendMessage, string $distinctId): ResponseInterface
     {
         $payload = [
             'distinct_id' => $distinctId,
@@ -34,13 +33,13 @@ class SuprSendClient
             'properties' => $suprSendMessage->getData(),
         ];
 
-        $this->sendRequest(
-            "event", 
+        return $this->sendRequest(
+            'event',
             json_encode($payload)
         );
     }
 
-    public function appendUser(string $email, string $distinctId)
+    public function appendUser(string $email, string $distinctId): ResponseInterface
     {
         $payload = [
             '$schema' => 2,
@@ -54,13 +53,13 @@ class SuprSendClient
             ],
         ];
 
-        $this->sendRequest(
-            "event", 
+        return $this->sendRequest(
+            'event',
             json_encode($payload)
         );
     }
 
-    protected function sendRequest($uri, $payload)
+    protected function sendRequest(string $uri, string $payload): ResponseInterface
     {
         $date = gmdate('D, d M Y H:i:s T');
 
@@ -72,6 +71,5 @@ class SuprSendClient
             ],
             'body' => $payload,
         ]);
-        
     }
 }

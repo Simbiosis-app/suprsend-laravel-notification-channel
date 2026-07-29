@@ -2,13 +2,20 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-notification-channels/suprsend.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/suprsend)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/laravel-notification-channels/suprsend/master.svg?style=flat-square)](https://travis-ci.org/laravel-notification-channels/suprsend)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/laravel-notification-channels/suprsend/tests.yml?branch=master&style=flat-square)](https://github.com/laravel-notification-channels/suprsend/actions/workflows/tests.yml)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/:sensio_labs_id.svg?style=flat-square)](https://insight.sensiolabs.com/projects/:sensio_labs_id)
 [![Quality Score](https://img.shields.io/scrutinizer/g/laravel-notification-channels/suprsend.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/suprsend)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/laravel-notification-channels/suprsend/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/suprsend/?branch=master)
 [![Total Downloads](https://img.shields.io/packagist/dt/laravel-notification-channels/suprsend.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/suprsend)
 
-This package makes it easy to send notifications using [SuprSend](https://www.suprsend.com/) with Laravel 5.5+, 6.x, 7.x, 8.x and 9.x
+This package makes it easy to send notifications using [SuprSend](https://www.suprsend.com/) with Laravel 12.x and 13.x
+
+## Requirements
+
+- PHP 8.3 – 8.5
+- Laravel 12.x or 13.x
+
+> Need Laravel 11 or older? Use the `1.x` releases of this package.
 
 SuprSend is a notification channel that can be used with Laravel. With SuprSend, Laravel developers can easily send notifications to their users via various channels, including email, SMS, and push notifications.
 
@@ -36,16 +43,17 @@ You can install the SuprSend notification channel for Laravel using Composer. Ru
 composer require laravel-notification-channels/suprsend
 ```
 
-Next, add the SuprSend service provider to your config/app.php file:
+The service provider is registered automatically via package auto-discovery — no manual
+registration is required. If you have disabled auto-discovery, add it to
+`bootstrap/providers.php` yourself:
 
 ```php
-'providers' => [
+return [
     // Other service providers...
 
     NotificationChannels\SuprSend\SuprSendServiceProvider::class,
-],
+];
 ```
-
 
 Finally, configure your SuprSend API credentials in your config/services.php file:
 

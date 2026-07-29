@@ -2,27 +2,24 @@
 
 namespace NotificationChannels\SuprSend;
 
-use NotificationChannels\SuprSend\Exceptions\CouldNotSendNotification;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\SuprSend\Exceptions\CouldNotSendNotification;
 
 class SuprSendChannel
 {
     protected SuprSendClient $client;
 
-    public function __construct()
+    public function __construct(?SuprSendClient $client = null)
     {
-        $this->client = new SuprSendClient();
+        $this->client = $client ?? new SuprSendClient();
     }
 
     /**
      * Send the given notification.
      *
-     * @param mixed $notifiable
-     * @param \Illuminate\Notifications\Notification $notification
-     *
      * @throws \NotificationChannels\SuprSend\Exceptions\CouldNotSendNotification
      */
-    public function send($notifiable, Notification $notification)
+    public function send(mixed $notifiable, Notification $notification): void
     {
         /** @var SuprSendMessage $message */
         $message = $notification->toSuprSend($notifiable);
@@ -39,7 +36,7 @@ class SuprSendChannel
         }
     }
 
-    protected function appendNewUser(string $email, string $distinctId)
+    protected function appendNewUser(string $email, string $distinctId): void
     {
         try {
             $this->client->appendUser($email, $distinctId);
@@ -52,6 +49,6 @@ class SuprSendChannel
     {
         $email = trim(strtolower($email));
 
-        return hash('sha256', $email . 'suprsend');
+        return hash('sha256', $email.'suprsend');
     }
 }

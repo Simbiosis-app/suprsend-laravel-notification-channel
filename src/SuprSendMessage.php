@@ -7,31 +7,26 @@ class SuprSendMessage
     protected array $data = [];
     protected string $eventName;
 
-    public function __construct()
+    public static function create(): static
     {
-        //
+        return new static();
     }
 
-    public static function create(): self
-    {
-        return new self();
-    }
-
-    public function eventName(string $eventName): self
+    public function eventName(string $eventName): static
     {
         $this->eventName = $eventName;
 
         return $this;
     }
 
-    public function data(array $data): self
+    public function data(array $data): static
     {
         $this->data = $data;
 
         return $this;
     }
-    
-    public function notifiable($notifiable): self
+
+    public function notifiable(mixed $notifiable): static
     {
         $this->data['notifiable'] = $notifiable;
 
